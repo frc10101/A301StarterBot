@@ -4,6 +4,7 @@
 
 package first.robot.opmode;
 
+import org.wpilib.command3.Scheduler;
 import org.wpilib.opmode.PeriodicOpMode;
 import org.wpilib.opmode.Teleop;
 import first.robot.Robot;
