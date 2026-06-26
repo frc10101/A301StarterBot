@@ -11,6 +11,9 @@ public class DriveTrain extends Mechanism{
     private A301 m_BackLeft;
     private A301 m_BackRight;
 
+
+    //TO_DO change dumb dumb brain code to pull IDs from a constants file and 
+    //finish definition outside of constructor
     /**
      * @param MFL_ID M_FrontLeft CAN ID
      * @param MFR_ID M_FrontRight CAN ID
