@@ -5,9 +5,11 @@
 package first.robot.opmode;
 
 import org.wpilib.command3.Scheduler;
+import org.wpilib.driverstation.Gamepad;
 import org.wpilib.opmode.PeriodicOpMode;
 import org.wpilib.opmode.Teleop;
 import first.robot.Robot;
+import first.robot.mechanisms.DriveTrain;
 
 @Teleop
 public class MyTeleop extends PeriodicOpMode {
@@ -17,6 +19,11 @@ public class MyTeleop extends PeriodicOpMode {
   public MyTeleop(Robot robot) {
     this.robot = robot;
   }
+
+  //Define joysticks
+  private static Gamepad gamepad = new Gamepad(0);
+  //define subsystems
+  private static DriveTrain drive = new DriveTrain();
 
   @Override
   public void disabledPeriodic() {
@@ -31,6 +38,8 @@ public class MyTeleop extends PeriodicOpMode {
   @Override
   public void periodic() {
     /* Called periodically (set time interval) while the robot is enabled. */
+    drive.mecanumDrive(gamepad.getLeftY(), gamepad.getLeftX(), gamepad.getRightX());
+
   }
 
   @Override

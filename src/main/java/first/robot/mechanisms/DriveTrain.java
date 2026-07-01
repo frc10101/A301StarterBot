@@ -1,29 +1,82 @@
 package first.robot.mechanisms;
 
+import org.wpilib.command3.Command;
+import org.wpilib.command3.Coroutine;
 import org.wpilib.command3.Mechanism;
-
+import first.robot.Constants.DriveTrainConstants;
+import first.robot.Constants.DriveTrainConstants.motors;
 import com.revrobotics.spark.A301;
 
 
 public class DriveTrain extends Mechanism{
-    private A301 m_FrontLeft;
-    private A301 m_FrontRight;
-    private A301 m_BackLeft;
-    private A301 m_BackRight;
+    private A301 m_FrontLeft = new A301(DriveTrainConstants.FrontLeftID);
+    private A301 m_FrontRight = new A301(DriveTrainConstants.FrontRightID);
+    private A301 m_BackLeft = new A301(DriveTrainConstants.BackLeftID);
+    private A301 m_BackRight = new A301(DriveTrainConstants.BackRightID);
 
+    //TO_DO need to create config for motors set directions and maybe current settings
 
-    //TO_DO change dumb dumb brain code to pull IDs from a constants file and 
-    //finish definition outside of constructor
-    /**
-     * @param MFL_ID M_FrontLeft CAN ID
-     * @param MFR_ID M_FrontRight CAN ID
-     * @param MBL_ID M_BackLeft CAN ID
-     * @param MBR_ID M_BackRight CAN ID
-     */
-    public DriveTrain(int MFL_ID, int MFR_ID, int MBL_ID, int MBR_ID) {
-        m_FrontLeft = new A301(MFL_ID);
-        m_BackRight = new A301(MBR_ID);
-        m_FrontRight = new A301(MFR_ID);
-        m_BackLeft = new A301(MBL_ID);
+    public DriveTrain() {
+    }
+
+    public Command setIndividualThrottle(motors motor, double power){
+        return run(Coroutine -> {
+        switch (motor) {
+            case FrontLeft:
+                m_FrontLeft.setThrottle(power); 
+            case FrontRight:
+                m_FrontRight.setThrottle(power);
+            case BackLeft:
+                m_BackLeft.setThrottle(power);
+            case BackRight:
+                m_BackRight.setThrottle(power);
+        }
+    }).named("setIndividualMotorPower " + motor + ':' + power);
+    }
+
+    public Command setAllMotorThrottles(int frontLeftPower, int frontRightPower, int backLeftPower, int backRightPower){
+        return run(Coroutine -> {
+            m_FrontLeft.setThrottle(frontLeftPower);
+            m_FrontRight.setThrottle(frontRightPower);
+            m_BackLeft.setThrottle(backLeftPower);
+            m_BackRight.setThrottle(backRightPower);
+        }).named("set all motor throttles");
+    }
+
+    public Command stop(){
+        return run(Coroutine -> {
+        m_FrontLeft.setThrottle(0);
+        m_FrontRight.setThrottle(0);
+        m_BackLeft.setThrottle(0);
+        m_BackRight.setThrottle(0);
+        }).named("Stop all Drive Motors");
+    }
+
+    public Command mecanumDrive(double forward, double strafe, double yaw){
+        return run(Coroutine -> {
+            double deadzone = 0.05;
+            double f = -forward;
+            double s = strafe;
+            double y = yaw;
+            if (Math.abs(f) < deadzone) f = 0;
+            if (Math.abs(s) < deadzone) s = 0;
+            if (Math.abs(y) < deadzone) y = 0;
+
+            m_FrontLeft.setThrottle(
+                (f + s) + y
+            );
+
+            m_FrontRight.setThrottle(
+                (f - s) - y
+            );
+
+            m_BackLeft.setThrottle(
+                (f - s) + y
+            );
+
+            m_BackRight.setThrottle(
+                (f + s) - y
+            );
+        }).named("Mecanum Drive");
     }
 }
