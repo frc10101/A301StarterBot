@@ -33,18 +33,21 @@ public class MyTeleop extends PeriodicOpMode {
   @Override
   public void start() {
     /* Called once when the robot is enabled. */
+    drive.setDefaultCommand(drive.mecanumDrive(gamepad.getLeftY(), gamepad.getLeftX(), gamepad.getRightX()));
   }
 
   @Override
   public void periodic() {
     /* Called periodically (set time interval) while the robot is enabled. */
-    drive.mecanumDrive(gamepad.getLeftY(), gamepad.getLeftX(), gamepad.getRightX());
-
+    Scheduler.getDefault().run(); 
   }
 
   @Override
   public void end() {
     /* Called when the robot is disabled (after previously being enabled). */
+    //maybe need to change this if we don't want everything on the robot to stop 
+    //when it is disabled for some reason
+    Scheduler.getDefault().cancelAll();
   }
 
   @Override
