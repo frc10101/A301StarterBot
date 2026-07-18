@@ -4,6 +4,8 @@
 
 package first.robot;
 
+import java.util.logging.Logger;
+
 import org.wpilib.framework.OpModeRobot;
 
 /**

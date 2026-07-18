@@ -6,10 +6,12 @@ package first.robot.opmode;
 
 import org.wpilib.command3.Scheduler;
 import org.wpilib.driverstation.Gamepad;
+import org.wpilib.driverstation.Joystick;
 import org.wpilib.opmode.PeriodicOpMode;
 import org.wpilib.opmode.Teleop;
 import first.robot.Robot;
 import first.robot.mechanisms.DriveTrain;
+import first.robot.mechanisms.Launcher;
 
 @Teleop
 public class MyTeleop extends PeriodicOpMode {
@@ -20,10 +22,11 @@ public class MyTeleop extends PeriodicOpMode {
     this.robot = robot;
   }
 
-  //Define joysticks
-  private static Gamepad gamepad = new Gamepad(0);
-  //define subsystems
+  // Define joysticks
+  private static Joystick gamepad = new Joystick(0);
+  // define subsystems
   private static DriveTrain drive = new DriveTrain();
+  private static Launcher launcher = new Launcher();
 
   @Override
   public void disabledPeriodic() {
@@ -33,11 +36,16 @@ public class MyTeleop extends PeriodicOpMode {
   @Override
   public void start() {
     /* Called once when the robot is enabled. */
-    drive.setDefaultCommand(drive.mecanumDrive(gamepad.getLeftY(), gamepad.getLeftX(), gamepad.getRightX()));
+    drive.setDefaultCommand(drive.mecanumDrive(gamepad::getY, gamepad::getX, gamepad::getZ));
   }
 
   @Override
   public void periodic() {
+    if(gamepad.button(1, true)){
+      
+      launcher.advanceBall()
+    }
+    launcher.rpmController();
     /* Called periodically (set time interval) while the robot is enabled. */
     Scheduler.getDefault().run(); 
   }
@@ -45,13 +53,15 @@ public class MyTeleop extends PeriodicOpMode {
   @Override
   public void end() {
     /* Called when the robot is disabled (after previously being enabled). */
-    //maybe need to change this if we don't want everything on the robot to stop 
-    //when it is disabled for some reason
+    // maybe need to change this if we don't want everything on the robot to stop
+    // when it is disabled for some reason
     Scheduler.getDefault().cancelAll();
   }
 
   @Override
   public void close() {
-    /* Called when the opmode is de-selected / no additional methods will be called. */
+    /*
+     * Called when the opmode is de-selected / no additional methods will be called.
+     */
   }
 }
